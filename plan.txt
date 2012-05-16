@@ -1,2 +1,10 @@
 Yell to walk on spikes without losing health.
 
+First steps:
+Get a guy that constantly walks across the screen using a
+looping, scrolling level
+
+Need a scrolling background class
+
+Need a walking hero sprite
+
