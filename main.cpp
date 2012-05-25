@@ -1,17 +1,26 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Time.hpp>
+#include <vector>
 
 //My headers
 #include "Ground.h"
+#include "Hero.h"
 
 using namespace sf;
+
+//Holds the level's game objects
+std::vector<GameObject*> gameObjects;
+
+//Prototypes
+void loadGameObjects();
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(640, 480), "Brootal March");
 
-	//Load our scrolling background texture into a sprite
-	Ground ground(0,240,640,240,1);
+	//Load game objects
+	loadGameObjects();
 
 	//Main loop
 	const int FRAMES_PER_SECOND = 60;
@@ -36,11 +45,15 @@ int main()
 		}
 
 		//update everything
-		ground.update();
+		for (int i = 0; i < gameObjects.size(); i++) {
+			gameObjects.at(i)->update();
+		}
 
 		// Draw everything.
 		window.clear();
-		window.draw(ground.getSprite());
+		for (int i = 0; i < gameObjects.size(); i++) {
+			window.draw(gameObjects.at(i)->getSprite());
+		}
 		window.display();
 
 		//handle FPS fixing
@@ -57,4 +70,14 @@ int main()
     }
 
     return EXIT_SUCCESS;
+}
+
+/*
+initialize all the game objects in the level
+*/
+void loadGameObjects() {
+	//Load our scrolling background texture
+	gameObjects.push_back(new Ground(0,240,640,240,1));
+	//Load our hero
+	gameObjects.push_back(new Hero(0,240));
 }

@@ -1,14 +1,20 @@
 #include "image_util.h"
+#include <exception>
 
 
-sf::Texture* loadImage(const std::string & locationInSpriteFolder)
+bool loadImage(const std::string & locationInSpriteFolder, 
+	sf::Texture& destTexture)
 {
 	sf::Image resultImage;
-	resultImage.loadFromFile("sprites/" + locationInSpriteFolder);
-	resultImage.createMaskFromColor(resultImage.getPixel(0,0));
+	if (resultImage.loadFromFile("sprites/" + locationInSpriteFolder)) {
+		resultImage.createMaskFromColor(resultImage.getPixel(0,0));
 
-	sf::Texture* result = new sf::Texture;
-	result->loadFromImage(resultImage);
+		destTexture.loadFromImage(resultImage);
 
-	return result;
+		return true;
+	} else {
+		//no image found
+		return false;
+	}
+
 }

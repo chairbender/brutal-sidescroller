@@ -3,7 +3,9 @@
 
 /*
 Load the specified image in the image folder
-as a texture. Use the pixel at (0,0) for the transparency.
-Always returns a new texture, so use sparingly.
+into the passed texture. Use the pixel at (0,0) for the transparency.
+Returns true if success, false otherwise. Creates a new image with each call,
+so use sparingly or improve implementation of this method.
 */
-sf::Texture* loadImage(const std::string & locationInSpriteFolder);
+bool loadImage(const std::string & locationInSpriteFolder, 
+	sf::Texture& destTexture);

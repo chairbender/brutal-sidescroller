@@ -80,15 +80,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="image_util.cpp" />
+    <ClCompile Include="Hero.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Ground.h" />
-    <ClInclude Include="image_util.h" />
+    <ClInclude Include="Hero.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="ResourceManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

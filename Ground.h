@@ -26,5 +26,7 @@ private:
 	sf::Sprite sprite;
 	int scrollSpeed;
 	//The texture that will be shared by all instances
-	static sf::Texture* groundTexture;
+	static sf::Texture groundTexture;
+	//Whether we have loaded our textures
+	static bool loaded;
 };

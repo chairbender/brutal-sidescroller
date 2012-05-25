@@ -1,9 +1,11 @@
 #include "Ground.h"
 #include "image_util.h"
+#include "TextureManager.h"
 
 
 //Initialize static members
-sf::Texture* Ground::groundTexture = NULL;
+sf::Texture Ground::groundTexture;
+bool Ground::loaded = false;
 
 Ground::Ground(float xPos, float yPos, float width, float height, int scrollSpeed)
 	: 
@@ -12,15 +14,15 @@ Ground::Ground(float xPos, float yPos, float width, float height, int scrollSpee
 {
 	//Check if the texture for ground has already
 	//been created. If not, create it.
-	if (Ground::groundTexture == NULL)
+	if (!loaded)
 	{
-		Ground::groundTexture = loadImage("ground.png");
+		Ground::groundTexture = *(gTextureManager.getResource("ground.png"));
 		//For looping
-		Ground::groundTexture->setRepeated(true);
+		Ground::groundTexture.setRepeated(true);
 	}
 
 	//make the sprite use the ground texture, put it in position
-	sprite.setTexture(*Ground::groundTexture);
+	sprite.setTexture(Ground::groundTexture);
 	sprite.setTextureRect(sf::IntRect(0,0,width,height));
 	sprite.setPosition(xPos,yPos);	
 }
