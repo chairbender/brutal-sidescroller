@@ -8,7 +8,7 @@ public:
 	Hero(int startX, int startY);
 	~Hero(void);
 
-	virtual const sf::Sprite getSprite() const;
+	virtual sf::Sprite& getSprite();
 
 	virtual void update();
 

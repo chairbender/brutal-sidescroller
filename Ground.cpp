@@ -32,7 +32,7 @@ Ground::~Ground(void)
 {
 }
 
-const sf::Sprite Ground::getSprite() const
+sf::Sprite& Ground::getSprite()
 {
 	return sprite;
 }

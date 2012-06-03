@@ -20,7 +20,7 @@ public:
 	Ground(float xPos, float yPos, float width, float height, int scrollSpeed = 0);
 	~Ground(void);
 
-	virtual const sf::Sprite getSprite() const;
+	virtual sf::Sprite& getSprite();
 	virtual void update();
 private:
 	sf::Sprite sprite;

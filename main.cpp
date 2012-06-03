@@ -12,6 +12,9 @@ using namespace sf;
 //Holds the level's game objects
 std::vector<GameObject*> gameObjects;
 
+//Reference to our hero
+Hero* hero;
+
 //Prototypes
 void loadGameObjects();
 
@@ -79,5 +82,7 @@ void loadGameObjects() {
 	//Load our scrolling background texture
 	gameObjects.push_back(new Ground(0,240,640,240,1));
 	//Load our hero
-	gameObjects.push_back(new Hero(0,240));
+	hero = new Hero(0,240);
+	hero->getSprite().setPosition(0,240 - hero->getSprite().getLocalBounds().height);
+	gameObjects.push_back(hero);
 }

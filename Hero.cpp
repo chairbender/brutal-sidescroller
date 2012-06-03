@@ -17,7 +17,7 @@ Hero::~Hero(void)
 {
 }
 
-const sf::Sprite Hero::getSprite() const
+sf::Sprite& Hero::getSprite()
 {
 	return sprite;
 }

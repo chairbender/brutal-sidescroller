@@ -13,13 +13,16 @@ public:
 
 	/*
 	Returns the sprite representing this game object,
-	transformed to global level coordinates
+	transformed to global level coordinates. SetPosition
+	is probably safe for you to do, but you might get errors
+	if you do stuff to this sprite other than that.
 	*/
-	virtual const sf::Sprite getSprite() const = 0;
+	virtual sf::Sprite& getSprite() = 0;
 	/*
 	Perform all of the object's logic for this step -
 	whatever it needs to do
 	*/
 	virtual void update() = 0;
+
 };
 
