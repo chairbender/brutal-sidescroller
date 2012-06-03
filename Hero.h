@@ -15,8 +15,8 @@ public:
 private:
 	//Our own sprite
 	sf::Sprite sprite;
-	//Our current frame index in the animation
-	int frameIndex;
+	//Timer for our animation; the ticks since the start of the current loop
+	int animationTicks;
 
 	//The shared animation, must be a pointer, otherwise, the resource manager
 	//might not be initialized when the initializer for the animation gets called. So

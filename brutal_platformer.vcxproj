@@ -82,7 +82,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="BackgroundScroller.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -90,7 +90,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Ground.h" />
+    <ClInclude Include="BackgroundScroller.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="ResourceManager.h" />

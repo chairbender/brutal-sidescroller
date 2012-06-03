@@ -2,11 +2,12 @@
 
 
 Hero::Hero(int startX, int startY)
-	:frameIndex(0)
+	: animationTicks(0)
 {
 	//Initialize the animations
 	if (Hero::walkAnimation == NULL) {
 		Hero::walkAnimation = new Animation("hero_walk");
+		Hero::walkAnimation->setSpeed(5);
 	}
 	sprite.setTexture(*(Hero::walkAnimation->getFrame(0)),true);
 	sprite.setPosition(startX,startY);
@@ -25,7 +26,10 @@ sf::Sprite& Hero::getSprite()
 void Hero::update()
 {
 	//animate
-	frameIndex = (frameIndex + 1) % Hero::walkAnimation->numFrames();
+	//increase the animation ticks
+	animationTicks = (animationTicks + 1) % 
+		(Hero::walkAnimation->getSpeed() * Hero::walkAnimation->numFrames());
+	int frameIndex = animationTicks / Hero::walkAnimation->getSpeed();
 	sprite.setTexture(*(Hero::walkAnimation->getFrame(frameIndex)),true);
 }
 

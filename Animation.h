@@ -18,6 +18,12 @@ public:
 	~Animation(void);
 
 	/*
+	Set the speed of the animation (in ticks per frame
+	*/
+	void setSpeed(int ticksPerFrame);
+	int Animation::getSpeed();
+
+	/*
 	Returns the texture at the specified frame index
 	*/
 	const sf::Texture* getFrame(int index) const;
@@ -29,6 +35,8 @@ public:
 
 private:
 	std::vector<sf::Texture*> frames;
-
+	
+	//number of ticks to wait before moving to the next frame
+	int ticksPerFrame;
 };
 

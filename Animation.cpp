@@ -50,3 +50,11 @@ const int Animation::numFrames() const
 {
 	return frames.size();
 }
+
+void Animation::setSpeed(int _ticksPerFrame) {
+	ticksPerFrame = _ticksPerFrame;
+}
+
+int Animation::getSpeed() {
+	return ticksPerFrame;
+}
