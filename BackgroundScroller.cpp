@@ -8,7 +8,8 @@ bool BackgroundScroller::loaded = false;
 BackgroundScroller::BackgroundScroller(const std::string pathToImageInSpriteFolder, float xPos, float yPos, float width, float height, int scrollSpeed)
 	: 
 GameObject(),
-	scrollSpeed(scrollSpeed)
+	scrollSpeed(scrollSpeed),
+	ticksSinceScroll(0)
 {
 	//Check if the texture for ground has already
 	//been created. If not, create it.
@@ -38,7 +39,12 @@ sf::Sprite& BackgroundScroller::getSprite()
 void BackgroundScroller::update()
 {
 	//Advance the scrolling
-	int curX = sprite.getTextureRect().left;
-	float nextX = curX + scrollSpeed % sprite.getTextureRect().width;
-	sprite.setTextureRect(sf::IntRect(nextX,sprite.getTextureRect().top,sprite.getTextureRect().width,sprite.getTextureRect().height));
+	ticksSinceScroll += 1;
+
+	if (ticksSinceScroll > scrollSpeed) {
+		int curX = sprite.getTextureRect().left;
+		float nextX = curX + 1 % sprite.getTextureRect().width;
+		sprite.setTextureRect(sf::IntRect(nextX,sprite.getTextureRect().top,sprite.getTextureRect().width,sprite.getTextureRect().height));
+		ticksSinceScroll = 0;
+	}
 }

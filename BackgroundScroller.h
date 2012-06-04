@@ -11,7 +11,7 @@ public:
 	Create the background sprite at the specified position.
 	Uses the path to find the image to use in the sprite folder
 	It will scroll at the specified
-	scroll speed (in pixels per tick)
+	scroll speed (in ticks per pixel)
 	It is intended to scroll without moving its rect,
 	and take up the whole width of the screen
 	*/
@@ -23,6 +23,7 @@ public:
 private:
 	sf::Sprite sprite;
 	int scrollSpeed;
+	int ticksSinceScroll;
 	//The texture that will be shared by all instances
 	sf::Texture groundTexture;
 	//Whether we have loaded our textures

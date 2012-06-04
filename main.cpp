@@ -80,7 +80,7 @@ initialize all the game objects in the level
 */
 void loadGameObjects() {
 	//Load our scrolling background texture
-	gameObjects.push_back(new BackgroundScroller("sky.png",0,0,640,480,1));
+	gameObjects.push_back(new BackgroundScroller("sky.png",0,0,640,480,20));
 	gameObjects.push_back(new BackgroundScroller("ground.png",0,240,640,240,1));
 	//Load our hero
 	hero = new Hero(0,240);
