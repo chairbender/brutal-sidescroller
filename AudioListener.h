@@ -1,3 +1,5 @@
+#pragma once
+#include <SFML/Audio.hpp>
 /*
 Acts like a game controller, except it's based on the user's voice
 input.
@@ -36,4 +38,6 @@ public:
 	AudioEvent getEvent();
 
 
+
 };
+

@@ -81,6 +81,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AudioListener.cpp" />
+    <ClCompile Include="AudioListenerPlayer.cpp" />
+    <ClCompile Include="AudioListenerRecorder.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="BackgroundScroller.cpp" />
     <ClCompile Include="Hero.cpp" />
@@ -89,6 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="AudioListener.h" />
+    <ClInclude Include="AudioListenerPlayer.h" />
+    <ClInclude Include="AudioListenerRecorder.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="BackgroundScroller.h" />
     <ClInclude Include="Hero.h" />
