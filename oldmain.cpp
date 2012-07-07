@@ -2,7 +2,6 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Time.hpp>
 #include <vector>
-#include <Windows.h>
 
 //My headers
 #include "Hero.h"
@@ -20,8 +19,7 @@ Hero* hero;
 //Prototypes
 void loadGameObjects();
 
-//TODO: Switch to portaudio. RTAudio isn't working due to some weird concurrency bug.
-int main()
+int oldmain()
 {
 
 	//Reopen a console
@@ -47,47 +45,51 @@ int main()
 
 	//Start the audio processing
 	AudioListenerRecorder input;
-	input.startReceivingInput();
+	try {
+		input.startReceivingInput();
 
-	while (window.isOpen())
-	{
-		//Handle events
-		sf::Event event;
-		while (window.pollEvent(event))
+		while (window.isOpen())
 		{
-			//Check for close event
-			if (event.type == sf::Event::Closed)
+			//Handle events
+			sf::Event event;
+			while (window.pollEvent(event))
 			{
-				window.close();
+				//Check for close event
+				if (event.type == sf::Event::Closed)
+				{
+					window.close();
+				}
+			}
+
+			//update everything
+			for (int i = 0; i < gameObjects.size(); i++) {
+				gameObjects.at(i)->update();
+			}
+
+			// Draw everything.
+			window.clear(sf::Color(224,232,255));
+			for (int i = 0; i < gameObjects.size(); i++) {
+				window.draw(gameObjects.at(i)->getSprite());
+			}
+			window.display();
+
+			//handle FPS fixing
+			gameTick += SKIP_TICKS;
+			sleepTime = gameTick - timer.getElapsedTime().asMilliseconds();
+
+			if (sleepTime >= 0)
+			{
+				sf::sleep(sf::milliseconds(sleepTime));
+			}
+			else {
+				//Running behind for some reason
 			}
 		}
 
-		//update everything
-		for (int i = 0; i < gameObjects.size(); i++) {
-			gameObjects.at(i)->update();
-		}
-
-		// Draw everything.
-		window.clear(sf::Color(224,232,255));
-		for (int i = 0; i < gameObjects.size(); i++) {
-			window.draw(gameObjects.at(i)->getSprite());
-		}
-		window.display();
-
-		//handle FPS fixing
-		gameTick += SKIP_TICKS;
-		sleepTime = gameTick - timer.getElapsedTime().asMilliseconds();
-
-		if (sleepTime >= 0)
-		{
-			sf::sleep(sf::milliseconds(sleepTime));
-		}
-		else {
-			//Running behind for some reason
-		}
+		input.stopReceivingInput();
+	} catch (RtError& e) {
+		std::cout << '\n' << e.getMessage() << '\n' << std::endl;
 	}
-
-	input.stopReceivingInput();
 
     return EXIT_SUCCESS;
 }

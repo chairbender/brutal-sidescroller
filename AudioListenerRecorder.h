@@ -1,7 +1,5 @@
-#pragma once
-#include <SFML/Audio.hpp>
 #include "SFML/Config.hpp"
-#include "AudioListener.h"
+#include "portaudio.h"
 
 /*
 Provides the functionality for AudioListener.
@@ -10,12 +8,13 @@ feedback volume, and scans for screams. When it detects a scream,
 calling getEvent() will return that.
 */
 
-class AudioListenerRecord : public sf::SoundRecorder {
+class AudioListenerRecorder {
 public:
+	enum AudioEvent { NOTHING, END_SCREAM, START_HIGH_SCREAM, START_LOW_SCREAM };
 
-	AudioListenerRecord();
+	AudioListenerRecorder() { };
 
-	~AudioListenerRecord();
+	~AudioListenerRecorder();
 
 	/*
 	Sets the volume (in decibels) of the fed-back audio from
@@ -29,12 +28,12 @@ public:
 	*/
 	AudioEvent getEvent();
 
-protected:
-	virtual bool onStart();
+	/*
+	Begins listening for events.
+	*/
+	void startReceivingInput();
 
-	virtual bool onProcessSamples( const sf::Int16* samples, std::size_t sampleCount );
-
-	virtual void onStop();
+	void stopReceivingInput();
 
 private:
 	float feedbackVolume;
