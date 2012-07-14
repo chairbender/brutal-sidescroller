@@ -1,8 +1,11 @@
 #include "AudioListenerRecorder.h"
+#include <system_error>
+#include <iostream>
 
 #define PA_SAMPLE_TYPE paFloat32
 #define SAMPLE_RATE (44100)
 #define FRAMES_PER_BUFFER (64)
+#define BUFFERS
 
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
@@ -24,17 +27,32 @@ static int inout( const void *inputBuffer, void *outputBuffer,
 	PaStreamCallbackFlags statusFlags,
 	void *userData )
 {
-	
+	SAMPLE *out = (SAMPLE*)outputBuffer;
+	const SAMPLE *in = (const SAMPLE*)inputBuffer;
+	unsigned int i;
+	(void) timeInfo; /* Prevent unused variable warnings. */
+	(void) statusFlags;
+	(void) userData;
+
+	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE)*2;
+
 	//Check if the input buffer is null. If so, write zeros
 	if (inputBuffer == NULL) {
-		memset(outputBuffer,0,framesPerBuffer);
+		memset(outputBuffer,0,numBytesToCopy);
 	} else {
-		memcpy( outputBuffer, inputBuffer, framesPerBuffer);
+		memcpy( outputBuffer, inputBuffer, numBytesToCopy);
 	}
 
 	return paContinue;
 }
 
+
+void reportError(PaError err) {
+	Pa_Terminate();
+	std::cerr << "An error occured while using the portaudio stream\n";
+	std::cerr << "Error number: " << err;
+	std::cerr << "Error message: " << Pa_GetErrorText(err);
+}
 
 void AudioListenerRecorder::startReceivingInput()
 {
@@ -45,15 +63,14 @@ void AudioListenerRecorder::startReceivingInput()
 	PaError err;
 
 	//Start up portaudio and check for errors.
-	//TODO: Force it to use DSOUND or some other host api. Not Asio.
 	err = Pa_Initialize();
-	if ( err != paNoError ) goto error;
+	if ( err != paNoError ) reportError(err);
 
 	// Get the default input device, complain if there is none
 	inputParameters.device = Pa_GetDefaultInputDevice();
-	if (inputParameters.device = paNoDevice) {
+	if (inputParameters.device == paNoDevice) {
 		std::cerr << "Error: No default input device.\n";
-		goto error;
+		reportError(err);
 	}
 	//Set the input device parameters based on our #defines
 	inputParameters.channelCount = 2;
@@ -63,9 +80,9 @@ void AudioListenerRecorder::startReceivingInput()
 
 	//Get the default output device, complain if none
 	outputParameters.device = Pa_GetDefaultOutputDevice();
-	if (outputParameters.device = paNoDevice) {
+	if (outputParameters.device == paNoDevice) {
 		std::cerr << "Error: No default output device.\n";
-		goto error;
+		reportError(err);
 	}
 	//Set the output parameters based on our #defines
 	outputParameters.channelCount = 2;
@@ -82,19 +99,13 @@ void AudioListenerRecorder::startReceivingInput()
 		0,
 		inout,
 		NULL );
-	if (err != paNoError) goto error;
+
+	if (err != paNoError) reportError(err);
 
 	err = Pa_StartStream(stream);
-	if (err != paNoError) goto error;
-
-
-
-error:
-	Pa_Terminate();
-	std::cerr << "An error occured while using the portaudio stream\n";
-	std::cerr << "Error number: " << err;
-	std::cerr << "Error message: " << Pa_GetErrorText(err);
+	if (err != paNoError) reportError(err);
 }
+
 
 void AudioListenerRecorder::stopReceivingInput()
 {

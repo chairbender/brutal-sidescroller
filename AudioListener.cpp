@@ -17,5 +17,5 @@ void AudioListener::setFeedbackVolume( float decibels )
 
 AudioListener::AudioEvent AudioListener::getEvent()
 {
-
+	return NOTHING;
 }

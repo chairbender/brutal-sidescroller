@@ -1,6 +1,10 @@
 #include "SFML/Config.hpp"
 #include "portaudio.h"
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 /*
 Provides the functionality for AudioListener.
 While recording, plays the audio back at the set
