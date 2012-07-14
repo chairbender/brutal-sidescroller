@@ -1,5 +1,4 @@
 #include "AudioListenerRecorder.h"
-#include "RtAudio.h"
 
 #define PA_SAMPLE_TYPE paFloat32
 #define SAMPLE_RATE (44100)
