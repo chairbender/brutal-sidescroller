@@ -5,7 +5,7 @@
 #define PA_SAMPLE_TYPE paFloat32
 #define SAMPLE_RATE (44100)
 #define FRAMES_PER_BUFFER (64)
-#define BUFFERS
+#define 
 
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
@@ -27,13 +27,6 @@ static int inout( const void *inputBuffer, void *outputBuffer,
 	PaStreamCallbackFlags statusFlags,
 	void *userData )
 {
-	SAMPLE *out = (SAMPLE*)outputBuffer;
-	const SAMPLE *in = (const SAMPLE*)inputBuffer;
-	unsigned int i;
-	(void) timeInfo; /* Prevent unused variable warnings. */
-	(void) statusFlags;
-	(void) userData;
-
 	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE)*2;
 
 	//Check if the input buffer is null. If so, write zeros
