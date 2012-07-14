@@ -4,8 +4,7 @@
 
 #define PA_SAMPLE_TYPE paFloat32
 #define SAMPLE_RATE (44100)
-#define FRAMES_PER_BUFFER (64)
-#define 
+#define FRAMES_PER_BUFFER (paFramesPerBufferUnspecified)
 
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
@@ -68,7 +67,7 @@ void AudioListenerRecorder::startReceivingInput()
 	//Set the input device parameters based on our #defines
 	inputParameters.channelCount = 2;
 	inputParameters.sampleFormat = PA_SAMPLE_TYPE;
-	inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
+	inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
 	inputParameters.hostApiSpecificStreamInfo = NULL;
 
 	//Get the default output device, complain if none
@@ -80,7 +79,7 @@ void AudioListenerRecorder::startReceivingInput()
 	//Set the output parameters based on our #defines
 	outputParameters.channelCount = 2;
 	outputParameters.sampleFormat = PA_SAMPLE_TYPE;
-	outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
+	outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultHighOutputLatency;
 	outputParameters.hostApiSpecificStreamInfo = NULL;
 
 	err = Pa_OpenStream(
