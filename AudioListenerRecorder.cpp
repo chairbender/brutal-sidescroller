@@ -6,15 +6,16 @@
 #define SAMPLE_RATE (44100)
 #define FRAMES_PER_BUFFER (paFramesPerBufferUnspecified)
 
+#define PEAK_THRESHOLD
+
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
 	feedbackVolume = decibels;
 	//TODO: Make it have an effect
 }
 
-AudioListenerRecorder::AudioEvent AudioListenerRecorder::getEvent()
-{
-	return NOTHING;
+void checkForAudioEvents(const void *inputBuffer, size_t numBytes) {
+
 }
 
 /*
@@ -26,12 +27,14 @@ static int inout( const void *inputBuffer, void *outputBuffer,
 	PaStreamCallbackFlags statusFlags,
 	void *userData )
 {
-	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE)*2;
+	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE);
 
-	//Check if the input buffer is null. If so, write zeros
+	//Check if the input buffer is null. If so, write zeros.
+	//If not, check for events
 	if (inputBuffer == NULL) {
 		memset(outputBuffer,0,numBytesToCopy);
 	} else {
+		checkForAudioEvents(inputBuffer,numBytesToCopy);
 		memcpy( outputBuffer, inputBuffer, numBytesToCopy);
 	}
 
@@ -65,7 +68,7 @@ void AudioListenerRecorder::startReceivingInput()
 		reportError(err);
 	}
 	//Set the input device parameters based on our #defines
-	inputParameters.channelCount = 2;
+	inputParameters.channelCount = 1;
 	inputParameters.sampleFormat = PA_SAMPLE_TYPE;
 	inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
 	inputParameters.hostApiSpecificStreamInfo = NULL;
@@ -77,7 +80,7 @@ void AudioListenerRecorder::startReceivingInput()
 		reportError(err);
 	}
 	//Set the output parameters based on our #defines
-	outputParameters.channelCount = 2;
+	outputParameters.channelCount = 1;
 	outputParameters.sampleFormat = PA_SAMPLE_TYPE;
 	outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultHighOutputLatency;
 	outputParameters.hostApiSpecificStreamInfo = NULL;
@@ -107,4 +110,18 @@ void AudioListenerRecorder::stopReceivingInput()
 AudioListenerRecorder::~AudioListenerRecorder()
 {
 	Pa_Terminate();
+}
+
+bool AudioListenerRecorder::hasEvents()
+{
+	return events.size() > 0;
+}
+
+
+/*
+Return whatever event was detected
+*/
+AudioListenerRecorder::AudioEvent AudioListenerRecorder::getEvent()
+{
+	return NOTHING;
 }

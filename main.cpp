@@ -7,7 +7,8 @@
 //My headers
 #include "Hero.h"
 #include "BackgroundScroller.h"
-#include "AudioListenerRecorder.h"
+#include <AudioListenerRecorder.h>
+#include "../../brutal_platform/brutal_platformer/SoundGraph.h"
 
 using namespace sf;
 
@@ -16,6 +17,9 @@ std::vector<GameObject*> gameObjects;
 
 //Reference to our hero
 Hero* hero;
+
+//Our audio processing clas
+AudioListenerRecorder* input;
 
 //Prototypes
 void loadGameObjects();
@@ -46,8 +50,11 @@ int main()
 	int sleepTime = 0;
 
 	//Start the audio processing
-	AudioListenerRecorder input;
-	input.startReceivingInput();
+	input = new AudioListenerRecorder();
+	input->startReceivingInput();
+	//Load the sound graph
+	SoundGraph* soundGraph = new SoundGraph(*input,400,400,40,40);
+	gameObjects.push_back(soundGraph);
 
 	while (window.isOpen())
 	{
@@ -87,7 +94,7 @@ int main()
 		}
 	}
 
-	input.stopReceivingInput();
+	input->stopReceivingInput();
 
     return EXIT_SUCCESS;
 }
@@ -103,4 +110,5 @@ void loadGameObjects() {
 	hero = new Hero(0,240);
 	hero->getSprite().setPosition(0,240 - hero->getSprite().getLocalBounds().height);
 	gameObjects.push_back(hero);
+	
 }
