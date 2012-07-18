@@ -1,6 +1,7 @@
 #include "SFML/Config.hpp"
 #include "portaudio.h"
 #include <queue>
+#include <list>
 
 #ifndef NULL
 #define NULL 0
@@ -18,7 +19,7 @@ class AudioListenerRecorder {
 public:
 	enum AudioEvent { NOTHING, END_SCREAM, START_HIGH_SCREAM, START_LOW_SCREAM };
 
-	AudioListenerRecorder() { };
+	AudioListenerRecorder();
 
 	~AudioListenerRecorder();
 
@@ -45,9 +46,27 @@ public:
 
 	void stopReceivingInput();
 
+	/*
+	Gets the last buffer of audio data that was processed
+	by this audio listener recorder
+	*/
+	std::list<float> getInputBuffer();
+
 private:
+
+	//Callback for processing audio
+	static int processAudio( const void *inputBuffer, void *outputBuffer, 
+		unsigned long framesPerBuffer,
+		const PaStreamCallbackTimeInfo* timeInfo,
+		PaStreamCallbackFlags statusFlags,
+		void *userData );
+
+	//Singleton reference
+	static AudioListenerRecorder* audioListenerRecorder;
+
 	float feedbackVolume;
 	std::queue<AudioEvent> events;
+	std::list<float> lastInputBuffer;
 };
 #endif
 

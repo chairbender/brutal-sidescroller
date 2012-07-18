@@ -8,6 +8,9 @@
 
 #define PEAK_THRESHOLD
 
+//Our static member
+AudioListenerRecorder* AudioListenerRecorder::audioListenerRecorder;
+
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
 	feedbackVolume = decibels;
@@ -15,32 +18,8 @@ void AudioListenerRecorder::setFeedbackVolume( float decibels )
 }
 
 void checkForAudioEvents(const void *inputBuffer, size_t numBytes) {
-
+	return;
 }
-
-/*
-Callback function for audio processing
-*/
-static int inout( const void *inputBuffer, void *outputBuffer, 
-	unsigned long framesPerBuffer,
-	const PaStreamCallbackTimeInfo* timeInfo,
-	PaStreamCallbackFlags statusFlags,
-	void *userData )
-{
-	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE);
-
-	//Check if the input buffer is null. If so, write zeros.
-	//If not, check for events
-	if (inputBuffer == NULL) {
-		memset(outputBuffer,0,numBytesToCopy);
-	} else {
-		checkForAudioEvents(inputBuffer,numBytesToCopy);
-		memcpy( outputBuffer, inputBuffer, numBytesToCopy);
-	}
-
-	return paContinue;
-}
-
 
 void reportError(PaError err) {
 	Pa_Terminate();
@@ -92,8 +71,8 @@ void AudioListenerRecorder::startReceivingInput()
 		SAMPLE_RATE,
 		FRAMES_PER_BUFFER,
 		0,
-		inout,
-		NULL );
+		AudioListenerRecorder::processAudio,
+		&(this->lastInputBuffer) );
 
 	if (err != paNoError) reportError(err);
 
@@ -124,4 +103,38 @@ Return whatever event was detected
 AudioListenerRecorder::AudioEvent AudioListenerRecorder::getEvent()
 {
 	return NOTHING;
+}
+
+std::list<float> AudioListenerRecorder::getInputBuffer()
+{
+	return lastInputBuffer;
+}
+
+int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
+{
+	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE);
+	float* outputAudio = (float *) outputBuffer;
+	const float * inputAudio = (const float *) inputBuffer;
+
+	//Check if the input buffer is null. If so, write zeros.
+	//If not, check for events
+	if (inputBuffer == NULL) {
+		memset(outputBuffer,0,numBytesToCopy);
+	} else {
+		//Save the last input buffer and redirect it to the output
+		audioListenerRecorder->lastInputBuffer.clear();
+		for (int i = 0; i < framesPerBuffer; i++) {
+			outputAudio[i] = inputAudio[i];
+			audioListenerRecorder->lastInputBuffer.push_back(inputAudio[i]);
+		}
+		checkForAudioEvents(inputBuffer,numBytesToCopy);
+	}
+
+	return paContinue;
+}
+
+//Just sets the singleton reference
+AudioListenerRecorder::AudioListenerRecorder()
+{
+	AudioListenerRecorder::audioListenerRecorder = this;
 }
