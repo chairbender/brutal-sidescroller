@@ -2,6 +2,7 @@
 #include "portaudio.h"
 #include <queue>
 #include <list>
+#include <boost/thread.hpp>
 
 #ifndef NULL
 #define NULL 0
@@ -50,7 +51,7 @@ public:
 	Gets the last buffer of audio data that was processed
 	by this audio listener recorder
 	*/
-	std::list<float> getInputBuffer();
+	const std::list<float>* getInputBuffer();
 
 private:
 
@@ -63,10 +64,13 @@ private:
 
 	//Singleton reference
 	static AudioListenerRecorder* audioListenerRecorder;
+	static boost::mutex bufferMutex;
 
 	float feedbackVolume;
 	std::queue<AudioEvent> events;
 	std::list<float> lastInputBuffer;
+
+
 };
 #endif
 

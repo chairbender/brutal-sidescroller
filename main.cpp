@@ -10,6 +10,10 @@
 #include <AudioListenerRecorder.h>
 #include <SoundGraph.h>
 
+
+#ifndef CPP_MAIN
+#define CPP_MAIN
+
 using namespace sf;
 
 //Holds the level's game objects
@@ -53,7 +57,7 @@ int main()
 	input = new AudioListenerRecorder();
 	input->startReceivingInput();
 	//Load the sound graph
-	SoundGraph* soundGraph = new SoundGraph(*input,400,400,40,40);
+	SoundGraph* soundGraph = new SoundGraph(input,400,400,40,40);
 	gameObjects.push_back(soundGraph);
 
 	while (window.isOpen())
@@ -112,3 +116,4 @@ void loadGameObjects() {
 	gameObjects.push_back(hero);
 	
 }
+#endif

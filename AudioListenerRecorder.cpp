@@ -2,14 +2,16 @@
 #include <system_error>
 #include <iostream>
 
+
 #define PA_SAMPLE_TYPE paFloat32
 #define SAMPLE_RATE (44100)
 #define FRAMES_PER_BUFFER (paFramesPerBufferUnspecified)
 
 #define PEAK_THRESHOLD
 
-//Our static member
+//Our static members
 AudioListenerRecorder* AudioListenerRecorder::audioListenerRecorder;
+boost::mutex AudioListenerRecorder::bufferMutex;
 
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
@@ -104,10 +106,19 @@ AudioListenerRecorder::AudioEvent AudioListenerRecorder::getEvent()
 {
 	return NOTHING;
 }
-
-std::list<float> AudioListenerRecorder::getInputBuffer()
+using namespace std;
+const std::list<float>* AudioListenerRecorder::getInputBuffer()
 {
-	return lastInputBuffer;
+
+	//Need to lock the input buffer while copying takes place
+	//This actually does 2 copies, one for copying from the current lastInputBuffer, 
+	//and one when whatever got this
+	bufferMutex.lock();
+	std::list<float>* resultBuffer = new std::list<float>(lastInputBuffer);
+	bufferMutex.unlock();
+
+
+	return resultBuffer;
 }
 
 int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
@@ -115,6 +126,9 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 	size_t numBytesToCopy = framesPerBuffer * sizeof(PA_SAMPLE_TYPE);
 	float* outputAudio = (float *) outputBuffer;
 	const float * inputAudio = (const float *) inputBuffer;
+
+	//Get the mutex for the audio buffer
+	bufferMutex.lock();
 
 	//Check if the input buffer is null. If so, write zeros.
 	//If not, check for events
@@ -129,6 +143,8 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 		}
 		checkForAudioEvents(inputBuffer,numBytesToCopy);
 	}
+
+	bufferMutex.unlock();
 
 	return paContinue;
 }
