@@ -6,23 +6,32 @@ This gameobject provides a small graph of audio data over time.
 #include <AudioListenerRecorder.h>
 #include "SFML/Config.hpp"
 #include "PixelArray.h"
+#include <UGen.h>
 
-class SoundGraph : public GameObject {
+using namespace std;
+
+class SoundGraph : public GameObject, public UGen {
 public:
 
 	/*
 	Create a SoundGraph at the specified location with the specified width,
-	graphing the passed AudioListenerRecorder
+	graphing the input audio data
 	*/
-	SoundGraph(AudioListenerRecorder* toGraph,int width, int height,int x, int y);
+	SoundGraph(int width, int height,int x, int y);
 
 	virtual sf::Sprite& getSprite();
 	virtual void update();
 
+	virtual void processInput( const float* input, int numSamples );
+
 private:
-	AudioListenerRecorder* audioListenerRecorder;
+	queue<float> unHandledAudio;	
+
 	float knownMax;
 	float knownMin;
+
+	int pixelsWide;
+	int pixelsHigh;
 	sf::Sprite graphSprite;
 	sf::Image graphImage;
 	sf::Texture graphTexture;

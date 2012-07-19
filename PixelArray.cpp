@@ -22,7 +22,7 @@ const sf::Image* PixelArray::getImage()
 void PixelArray::shiftPixels(int pixelsToShift) {
 	for (int y = 0; y < height; y++) {
 		for (int x = 1; x < width; x++) {
-			//TODO: Implement
+			//TODO: Implement the shifting
 		}
 	}
 }

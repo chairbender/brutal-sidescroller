@@ -54,10 +54,10 @@ int main()
 	int sleepTime = 0;
 
 	//Start the audio processing
-	input = new AudioListenerRecorder();
+	input = AudioListenerRecorder::getAudioListenerRecorder();
 	input->startReceivingInput();
 	//Load the sound graph
-	SoundGraph* soundGraph = new SoundGraph(input,400,400,40,40);
+	SoundGraph* soundGraph = new SoundGraph(400,400,40,40);
 	gameObjects.push_back(soundGraph);
 
 	while (window.isOpen())

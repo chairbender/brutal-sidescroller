@@ -107,19 +107,6 @@ AudioListenerRecorder::AudioEvent AudioListenerRecorder::getEvent()
 	return NOTHING;
 }
 using namespace std;
-const std::list<float>* AudioListenerRecorder::getInputBuffer()
-{
-
-	//Need to lock the input buffer while copying takes place
-	//This actually does 2 copies, one for copying from the current lastInputBuffer, 
-	//and one when whatever got this
-	bufferMutex.lock();
-	std::list<float>* resultBuffer = new std::list<float>(lastInputBuffer);
-	bufferMutex.unlock();
-
-
-	return resultBuffer;
-}
 
 int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData )
 {
@@ -135,6 +122,8 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 	if (inputBuffer == NULL) {
 		memset(outputBuffer,0,numBytesToCopy);
 	} else {
+		//Call our subscriber and have it process audio
+		audioListenerRecorder->subscriber->processInput(inputAudio,framesPerBuffer);
 		//Save the last input buffer and redirect it to the output
 		audioListenerRecorder->lastInputBuffer.clear();
 		for (int i = 0; i < framesPerBuffer; i++) {
@@ -153,4 +142,18 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 AudioListenerRecorder::AudioListenerRecorder()
 {
 	AudioListenerRecorder::audioListenerRecorder = this;
+}
+
+AudioListenerRecorder* AudioListenerRecorder::getAudioListenerRecorder()
+{
+	if (audioListenerRecorder == NULL) {
+		audioListenerRecorder = new AudioListenerRecorder();
+	}
+
+	return audioListenerRecorder;
+}
+
+void AudioListenerRecorder::addSubscriber( UGen* subscriber )
+{
+	this->subscriber = subscriber;
 }

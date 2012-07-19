@@ -3,15 +3,17 @@
 #include <queue>
 #include <list>
 #include <boost/thread.hpp>
+#include <UGen.h>
 
 #ifndef NULL
 #define NULL 0
 #endif
 
 /*
-Provides the functionality for AudioListener.
 While recording, plays the audio back at the set
-feedback volume, and scans for screams. When it detects a scream,
+feedback volume, and scans for screams. Can also
+have subscriber ugens which will recieve audio data as it
+comes in, and can do what they want with it. When it detects a scream,
 calling getEvent() will return that.
 */
 #ifndef AUDIOLISTENERRECORDER_H
@@ -20,9 +22,16 @@ class AudioListenerRecorder {
 public:
 	enum AudioEvent { NOTHING, END_SCREAM, START_HIGH_SCREAM, START_LOW_SCREAM };
 
-	AudioListenerRecorder();
+	/*
+	Returns the single audio listener recorder
+	*/
+	static AudioListenerRecorder* getAudioListenerRecorder();
 
-	~AudioListenerRecorder();
+	/*
+	Adds a UGen whose processInput will be called with input data
+	whenever the audiolistenerrecorder receives input data
+	*/
+	void addSubscriber(UGen* subscriber);
 
 	/*
 	Sets the volume (in decibels) of the fed-back audio from
@@ -51,9 +60,12 @@ public:
 	Gets the last buffer of audio data that was processed
 	by this audio listener recorder
 	*/
-	const std::list<float>* getInputBuffer();
+	std::list<float>* getInputBuffer();
 
 private:
+	AudioListenerRecorder();
+
+	~AudioListenerRecorder();
 
 	//Callback for processing audio
 	static int processAudio( const void *inputBuffer, void *outputBuffer, 
@@ -69,6 +81,7 @@ private:
 	float feedbackVolume;
 	std::queue<AudioEvent> events;
 	std::list<float> lastInputBuffer;
+	UGen* subscriber;
 
 
 };

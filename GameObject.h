@@ -8,8 +8,8 @@ The abstract base class for every separate thing in the game state
 class GameObject
 {
 public:
-	GameObject(void);
-	~GameObject(void);
+	GameObject() { };
+	~GameObject() { };
 
 	/*
 	Returns the sprite representing this game object,
