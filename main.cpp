@@ -8,7 +8,7 @@
 #include "Hero.h"
 #include "BackgroundScroller.h"
 #include <AudioListenerRecorder.h>
-#include "../../brutal_platform/brutal_platformer/SoundGraph.h"
+#include <SoundGraph.h>
 
 using namespace sf;
 
