@@ -1,5 +1,5 @@
 #pragma once
-#include "gameobject.h"
+#include <gameobject.h>
 /*
 Represents a sprite that scrolls its image in place
 */
