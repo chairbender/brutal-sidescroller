@@ -62,6 +62,13 @@ public:
 	*/
 	std::list<float>* getInputBuffer();
 
+	/*TODO: Finish adding in scream detection thresholding
+	Will provide a method that SoundGraph can use to get the currently set
+	threshold for detecting screams.
+	*/
+	void checkForAudioEvents(const void *inputBuffer, size_t numBytes);
+
+
 private:
 	AudioListenerRecorder();
 
@@ -73,6 +80,10 @@ private:
 		const PaStreamCallbackTimeInfo* timeInfo,
 		PaStreamCallbackFlags statusFlags,
 		void *userData );
+
+	//Various utility variables
+	float knownMin; //current min and max audio values recorded
+	float knownMax;
 
 	//Singleton reference
 	static AudioListenerRecorder* audioListenerRecorder;

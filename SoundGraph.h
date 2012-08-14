@@ -8,6 +8,8 @@ This gameobject provides a small graph of audio data over time.
 #include "PixelArray.h"
 #include <UGen.h>
 
+#include <deque>
+
 using namespace std;
 
 class SoundGraph : public GameObject, public UGen {
@@ -25,7 +27,8 @@ public:
 	virtual void processInput( const float* input, int numSamples );
 
 private:
-	queue<float> unHandledAudio;	
+	deque<float> unHandledAudio;	
+	boost::mutex audioQueueMutex;
 
 	float knownMax;
 	float knownMin;

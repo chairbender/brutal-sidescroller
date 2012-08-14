@@ -34,6 +34,6 @@ private:
 	sf::Image image;
 	int* pixels;
 	int width, height;
-
+	sf::Color background;
 	int getPixel(int x, int y);
 };

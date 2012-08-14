@@ -1,6 +1,9 @@
 #include "AudioListenerRecorder.h"
 #include <system_error>
 #include <iostream>
+#include <algorithm>
+
+using namespace std;
 
 
 #define PA_SAMPLE_TYPE paFloat32
@@ -16,11 +19,21 @@ boost::mutex AudioListenerRecorder::bufferMutex;
 void AudioListenerRecorder::setFeedbackVolume( float decibels )
 {
 	feedbackVolume = decibels;
-	//TODO: Make it have an effect
 }
 
 void checkForAudioEvents(const void *inputBuffer, size_t numBytes) {
-	return;
+	////We know we are dealing with an inputBuffer
+	////full of floats
+	//const float * input = (const float *) inputBuffer;
+	//AudioListenerRecorder* recorder = AudioListenerRecorder::getAudioListenerRecorder();
+
+	//for (int i = 0; i < numBytes/sizeof(float); i++) {
+	//	//Track the current min and max
+	//	recorder->knownMax = max<float>(average ,recorder->knownMax);
+	//	recorder->knownMin = min<float>(average ,recorder->knownMin);
+	//}
+
+	//return;
 }
 
 void reportError(PaError err) {
@@ -98,7 +111,6 @@ bool AudioListenerRecorder::hasEvents()
 	return events.size() > 0;
 }
 
-
 /*
 Return whatever event was detected
 */
@@ -122,15 +134,18 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 	if (inputBuffer == NULL) {
 		memset(outputBuffer,0,numBytesToCopy);
 	} else {
-		//Call our subscriber and have it process audio
-		audioListenerRecorder->subscriber->processInput(inputAudio,framesPerBuffer);
+		//Call our subscriber and have it process audio, if it exists
+		if (audioListenerRecorder->subscriber != NULL) {
+			audioListenerRecorder->subscriber->processInput(inputAudio,framesPerBuffer);
+		}
 		//Save the last input buffer and redirect it to the output
 		audioListenerRecorder->lastInputBuffer.clear();
 		for (int i = 0; i < framesPerBuffer; i++) {
 			outputAudio[i] = inputAudio[i];
 			audioListenerRecorder->lastInputBuffer.push_back(inputAudio[i]);
 		}
-		checkForAudioEvents(inputBuffer,numBytesToCopy);
+		//See if any screams started
+		//checkForAudioEvents(inputBuffer,numBytesToCopy);
 	}
 
 	bufferMutex.unlock();
@@ -142,6 +157,7 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 AudioListenerRecorder::AudioListenerRecorder()
 {
 	AudioListenerRecorder::audioListenerRecorder = this;
+	this->subscriber = NULL;
 }
 
 AudioListenerRecorder* AudioListenerRecorder::getAudioListenerRecorder()
