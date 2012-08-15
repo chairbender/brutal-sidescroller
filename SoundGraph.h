@@ -2,11 +2,11 @@
 This gameobject provides a small graph of audio data over time.
 */
 #include <SFML/Graphics.hpp>
-#include <GameObject.h>
-#include <AudioListenerRecorder.h>
+#include "GameObject.h"
+#include "AudioListenerRecorder.h"
 #include "SFML/Config.hpp"
 #include "PixelArray.h"
-#include <UGen.h>
+#include "UGen.h"
 
 #include <deque>
 

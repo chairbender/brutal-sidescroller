@@ -7,8 +7,8 @@
 //My headers
 #include "Hero.h"
 #include "BackgroundScroller.h"
-#include <AudioListenerRecorder.h>
-#include <SoundGraph.h>
+#include "AudioListenerRecorder.h"
+#include "SoundGraph.h"
 
 
 #ifndef CPP_MAIN

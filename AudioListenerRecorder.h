@@ -3,7 +3,7 @@
 #include <queue>
 #include <list>
 #include <boost/thread.hpp>
-#include <UGen.h>
+#include "UGen.h"
 
 #ifndef NULL
 #define NULL 0
