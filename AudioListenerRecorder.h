@@ -20,7 +20,7 @@ calling getEvent() will return that.
 #define AUDIOLISTENERRECORDER_H
 class AudioListenerRecorder {
 public:
-	enum AudioEvent { NOTHING, END_SCREAM, START_HIGH_SCREAM, START_LOW_SCREAM };
+	enum AudioEvent { NOTHING, END_SCREAM, START_SCREAM };
 
 	/*
 	Returns the single audio listener recorder
@@ -40,7 +40,7 @@ public:
 	void setFeedbackVolume(float decibels);
 
 	/*
-	Returns whatever has happened that hasn;t been gotten yet
+	Returns whatever has happened that hasn't been getEvent'd() yet
 	Only returns transients - on and off events, not sustained ones.
 	*/
 	AudioEvent getEvent();
@@ -82,6 +82,10 @@ private:
 		void *userData );
 
 	//Various utility variables
+	bool inScream; //When we are in a scream, we will need to ignore peak events
+	float screamStartLevel; // what level where we at (LPF'd) when the scream started (so we
+							//know when it is over)
+	float smoothedValue; //For tracking the LPF'd value between input buffers
 	float knownMin; //current min and max audio values recorded
 	float knownMax;
 

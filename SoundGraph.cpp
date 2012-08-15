@@ -13,10 +13,14 @@ using namespace std;
 //Control how the graph appears
 #define SAMPLES_PER_HORIZONTAL_PIXEL 2048
 
+//Controls smoothing for the low pass filter on the input data
+#define SMOOTHING 10
+
 SoundGraph::SoundGraph(int width, int height,int x, int y )
 :	pixels(width,height,sf::Color(255,255,255,100)),
 	pixelsHigh(height),
-	pixelsWide(width)
+	pixelsWide(width),
+	smoothedValue(0)
 {
 	//Set the position by position the sprite
 	graphSprite.setPosition(x,y);
@@ -48,24 +52,26 @@ void SoundGraph::update()
 		//In the outer loop, we loop through the number of pixels we have yet to draw
 		for (int pixelIndex = 0; pixelIndex < numPixels; pixelIndex++) {
 			//In the inner loop, we loop through SAMPLES_PER_HORIZONTAL_PIXEL pixels,
-			//update max and min, and come up with an average.
+			//update max and min, and come up with an average. We apply a simple LPF to
+			//the input before using any values, though
 			float total = 0;
 			for (int sampleIndex = 0; sampleIndex < SAMPLES_PER_HORIZONTAL_PIXEL; sampleIndex++) {
-				//Make everything positive
+				//Make everything positive and apply a low pass filter
 				float nextSample = abs(unHandledAudio.front());
 				assert (!unHandledAudio.empty());
 				total += nextSample;
 				unHandledAudio.pop_front();
 			}
 			float average = total / SAMPLES_PER_HORIZONTAL_PIXEL;
+			smoothedValue += (average - smoothedValue) / SMOOTHING;
 			//Update our known max and min from the average instead of the actual sample values
-			knownMax = max<float>(average ,knownMax);
-			knownMin = min<float>(average ,knownMin);
+			knownMax = max<float>(smoothedValue ,knownMax);
+			knownMin = min<float>(smoothedValue ,knownMin);
 			//We now have an average value to output to the graph for this pixel.
 			//Shift the pixel grid left and put this as the rightmost pixel
 			pixels.shiftPixels(-1);
 			//Calculate the y value of this pixel by scaling
-			int y = pixelsHigh - (int) (((average - knownMin)/ (knownMax - knownMin)) * pixelsHigh);
+			int y = pixelsHigh - (int) (((smoothedValue - knownMin)/ (knownMax - knownMin)) * pixelsHigh);
 			pixels.setPixel(pixelsWide-1,y,sf::Color(122,122,122,100));
 		}
 	}

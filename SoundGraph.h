@@ -32,6 +32,13 @@ private:
 
 	float knownMax;
 	float knownMin;
+	//For tracking the current LPF value of
+	//the input the SoundGraph has processed.
+	//We need this to track the smoothing value between processInput calls,
+	//otherwise there will be weird values at the start of every new input
+	//recieved when we process and display it (since the initial value of the
+	//filter would be reset).
+	float smoothedValue;
 
 	int pixelsWide;
 	int pixelsHigh;

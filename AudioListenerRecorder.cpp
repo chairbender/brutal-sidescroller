@@ -1,6 +1,7 @@
 #include "AudioListenerRecorder.h"
 #include <system_error>
 #include <iostream>
+
 #include <algorithm>
 
 using namespace std;
@@ -10,7 +11,12 @@ using namespace std;
 #define SAMPLE_RATE (44100)
 #define FRAMES_PER_BUFFER (paFramesPerBufferUnspecified)
 
-#define PEAK_THRESHOLD
+
+//Audio processing values
+//How much the LPF'd audio needs to jump by to count this as a scream starting
+#define PEAK_THRESHOLD .0001
+//How much smoothing (filtering) to apply to input
+#define SMOOTHING 1000
 
 //Our static members
 AudioListenerRecorder* AudioListenerRecorder::audioListenerRecorder;
@@ -21,19 +27,41 @@ void AudioListenerRecorder::setFeedbackVolume( float decibels )
 	feedbackVolume = decibels;
 }
 
-void checkForAudioEvents(const void *inputBuffer, size_t numBytes) {
-	////We know we are dealing with an inputBuffer
-	////full of floats
-	//const float * input = (const float *) inputBuffer;
-	//AudioListenerRecorder* recorder = AudioListenerRecorder::getAudioListenerRecorder();
+void AudioListenerRecorder::checkForAudioEvents(const void *inputBuffer, size_t numBytes) {
+	//A scream has started if the low-pass-filtered input
+	//has a big enough discontinuity
 
-	//for (int i = 0; i < numBytes/sizeof(float); i++) {
-	//	//Track the current min and max
-	//	recorder->knownMax = max<float>(average ,recorder->knownMax);
-	//	recorder->knownMin = min<float>(average ,recorder->knownMin);
-	//}
+	//We know we are dealing with an inputBuffer
+	//full of floats
+	const float * input = (const float *) inputBuffer;
+	AudioListenerRecorder* recorder = AudioListenerRecorder::getAudioListenerRecorder();
 
-	//return;
+	for (int i = 0; i < numBytes/sizeof(float); i++) {
+		//Apply the LPF
+		float prevSmoothedValue = smoothedValue;
+		smoothedValue += (abs(input[i]) - smoothedValue) / SMOOTHING;
+
+		//Check if the input jumps farther than the PEAK_THRESHOLD. If so,
+		//report the start of a scream (if we are not already in a scream).
+		if (inScream) {
+			//Check for scream ends
+			if (smoothedValue <= screamStartLevel) {
+				events.push(AudioEvent::END_SCREAM);
+				inScream = false;
+			}
+		} else {
+			//Check for scream starts
+			if (smoothedValue - prevSmoothedValue > PEAK_THRESHOLD) {
+				//Scream detected
+				events.push(AudioEvent::START_SCREAM);
+				inScream = true;
+				screamStartLevel = smoothedValue;
+			}
+		}
+
+	}
+
+	return;
 }
 
 void reportError(PaError err) {
@@ -112,11 +140,13 @@ bool AudioListenerRecorder::hasEvents()
 }
 
 /*
-Return whatever event was detected
+Return whatever event was detected and remove it from the event queue
 */
 AudioListenerRecorder::AudioEvent AudioListenerRecorder::getEvent()
 {
-	return NOTHING;
+	AudioEvent toReturn = events.front();
+	events.pop();
+	return toReturn;
 }
 using namespace std;
 
@@ -145,7 +175,7 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 			audioListenerRecorder->lastInputBuffer.push_back(inputAudio[i]);
 		}
 		//See if any screams started
-		//checkForAudioEvents(inputBuffer,numBytesToCopy);
+		audioListenerRecorder->checkForAudioEvents(inputBuffer,numBytesToCopy);
 	}
 
 	bufferMutex.unlock();
@@ -154,7 +184,9 @@ int AudioListenerRecorder::processAudio( const void *inputBuffer, void *outputBu
 }
 
 //Just sets the singleton reference
-AudioListenerRecorder::AudioListenerRecorder()
+AudioListenerRecorder::AudioListenerRecorder() :
+	smoothedValue(0),
+	inScream(false)
 {
 	AudioListenerRecorder::audioListenerRecorder = this;
 	this->subscriber = NULL;

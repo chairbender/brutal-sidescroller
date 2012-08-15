@@ -78,6 +78,18 @@ int main()
 			gameObjects.at(i)->update();
 		}
 
+		//Check for audio events
+		while (input->hasEvents()) {
+			switch (input->getEvent()) {
+				case AudioListenerRecorder::AudioEvent::START_SCREAM:
+					std::cout << "Scream detected!\n";
+					break;
+				case AudioListenerRecorder::AudioEvent::END_SCREAM:
+					std::cout << "Scream ended!\n";
+					break;
+			}
+		}
+
 		// Draw everything.
 		window.clear(sf::Color(224,232,255));
 		for (int i = 0; i < gameObjects.size(); i++) {
