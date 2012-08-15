@@ -1,3 +1,12 @@
+Design:
+--------------------
+The audio processing
+--------------------
+The AudioListenerRecorder provides public access to characteristics of the
+audio to listeners. It has a list of AudioFeatureListeners which get called
+every time and get access to specific audio features of the buffer, in addition
+to the actual buffer. That way, data need not be re-calculated.
+
 ========================================================================
     CONSOLE APPLICATION : brutal_platformer Project Overview
 ========================================================================

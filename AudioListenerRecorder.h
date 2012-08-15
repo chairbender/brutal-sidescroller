@@ -28,10 +28,10 @@ public:
 	static AudioListenerRecorder* getAudioListenerRecorder();
 
 	/*
-	Adds a UGen whose processInput will be called with input data
-	whenever the audiolistenerrecorder receives input data
+	Adds a FeatureListener whose processInput will be called with input data
+	and some features whenever the audiolistenerrecorder receives input data
 	*/
-	void addSubscriber(UGen* subscriber);
+	void addFeatureListener(UGen* subscriber);
 
 	/*
 	Sets the volume (in decibels) of the fed-back audio from
@@ -55,18 +55,6 @@ public:
 	void startReceivingInput();
 
 	void stopReceivingInput();
-
-	/*
-	Gets the last buffer of audio data that was processed
-	by this audio listener recorder
-	*/
-	std::list<float>* getInputBuffer();
-
-	/*TODO: Finish adding in scream detection thresholding
-	Will provide a method that SoundGraph can use to get the currently set
-	threshold for detecting screams.
-	*/
-	void checkForAudioEvents(const void *inputBuffer, size_t numBytes);
 
 
 private:
@@ -92,7 +80,7 @@ private:
 	float feedbackVolume;
 	std::queue<AudioEvent> events;
 	std::list<float> lastInputBuffer;
-	UGen* subscriber;
+	std::list<AudioFeatureListener> subscribers; //TODO: implement
 
 
 };
