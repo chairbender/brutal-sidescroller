@@ -21,7 +21,7 @@ public:
 	*/
 	SoundGraph(int width, int height,int x, int y);
 
-	virtual sf::Sprite& getSprite();
+	virtual void draw(sf::RenderWindow &toRenderOn);
 	virtual void update();
 
 	virtual void processInput( const float* input, int numSamples );

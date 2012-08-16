@@ -18,9 +18,9 @@ Hero::~Hero(void)
 {
 }
 
-sf::Sprite& Hero::getSprite()
+void Hero::draw(sf::RenderWindow &toRenderOn)
 {
-	return sprite;
+	toRenderOn.draw(sprite);
 }
 
 void Hero::update()
@@ -31,6 +31,17 @@ void Hero::update()
 		(Hero::walkAnimation->getSpeed() * Hero::walkAnimation->numFrames());
 	int frameIndex = animationTicks / Hero::walkAnimation->getSpeed();
 	sprite.setTexture(*(Hero::walkAnimation->getFrame(frameIndex)),true);
+}
+
+void Hero::setPosition( float x, float y )
+{
+	//Sets the position of the hero on the screen
+	sprite.setPosition(x,y);
+}
+
+float Hero::getHeight()
+{
+	return sprite.getLocalBounds().height;
 }
 
 //Static members initialization

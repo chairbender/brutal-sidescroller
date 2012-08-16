@@ -31,9 +31,9 @@ BackgroundScroller::~BackgroundScroller(void)
 {
 }
 
-sf::Sprite& BackgroundScroller::getSprite()
+void BackgroundScroller::draw(sf::RenderWindow &toRenderOn)
 {
-	return sprite;
+	toRenderOn.draw(sprite);
 }
 
 void BackgroundScroller::update()

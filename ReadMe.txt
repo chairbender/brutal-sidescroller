@@ -1,3 +1,5 @@
+TODO: Spikes. Levels stored in an XML format. 
+
 ========================================================================
     CONSOLE APPLICATION : brutal_platformer Project Overview
 ========================================================================

@@ -93,7 +93,7 @@ int main()
 		// Draw everything.
 		window.clear(sf::Color(224,232,255));
 		for (int i = 0; i < gameObjects.size(); i++) {
-			window.draw(gameObjects.at(i)->getSprite());
+			gameObjects.at(i)->draw(window);
 		}
 		window.display();
 
@@ -124,7 +124,7 @@ void loadGameObjects() {
 	gameObjects.push_back(new BackgroundScroller("ground.png",0,240,640,240,1));
 	//Load our hero
 	hero = new Hero(0,240);
-	hero->getSprite().setPosition(0,240 - hero->getSprite().getLocalBounds().height);
+	hero->setPosition(0,240 - hero->getHeight());
 	gameObjects.push_back(hero);
 	
 }

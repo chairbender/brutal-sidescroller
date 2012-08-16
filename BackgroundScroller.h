@@ -18,7 +18,7 @@ public:
 	BackgroundScroller(const std::string pathToImageInSpriteFolder, float xPos, float yPos, float width, float height, int scrollSpeed = 0);
 	~BackgroundScroller(void);
 
-	virtual sf::Sprite& getSprite();
+	virtual void draw(sf::RenderWindow &toRenderOn);
 	virtual void update();
 private:
 	sf::Sprite sprite;

@@ -79,11 +79,12 @@ void SoundGraph::update()
 }
 
 
-sf::Sprite& SoundGraph::getSprite()
+void SoundGraph::draw(sf::RenderWindow &toRenderOn)
 {
 	this->graphTexture.loadFromImage(*pixels.getImage());
 	this->graphSprite.setTexture(graphTexture);
-	return graphSprite;
+
+	toRenderOn.draw(graphSprite);
 }
 
 void SoundGraph::processInput( const float* input, int numSamples )

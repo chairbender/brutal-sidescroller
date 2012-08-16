@@ -8,9 +8,19 @@ public:
 	Hero(int startX, int startY);
 	~Hero(void);
 
-	virtual sf::Sprite& getSprite();
+	virtual void draw(sf::RenderWindow &toRenderOn);
 
 	virtual void update();
+
+	/*
+	Set the position of the hero
+	*/
+	void setPosition(float x, float y);
+
+	/*
+	Returns the height in pixels of the hero
+	*/
+	float getHeight();
 
 private:
 	//Our own sprite
