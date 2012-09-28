@@ -1,0 +1,6 @@
+<Level bpm="100">
+	<!-- all note times are in terms of 32nd notes are absolute from the start of the level-->
+	<Tempo start="100" bpm="100" /> <!-- A tempo change at 32nd note 100 into the song -->
+	<Note start="200" />
+	<Note start="240" />
+</Level>

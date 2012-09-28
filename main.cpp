@@ -28,7 +28,6 @@ AudioListenerRecorder* input;
 //Prototypes
 void loadGameObjects();
 
-//TODO: Switch to portaudio. RTAudio isn't working due to some weird concurrency bug.
 int main()
 {
 
